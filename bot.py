@@ -2,9 +2,10 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
 
-# Замените на ваш токен и ID
+# Введите сюда ваш токен
 TOKEN = "7621100705:AAHJ7R4N4ihthLUjV7cvcP95WrAo4GQOvl8"
-ADMIN_ID = 2105766790  # ваш Telegram ID
+# Введите сюда ваш Telegram ID (числом)
+ADMIN_ID = 2105766790
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,40 +24,36 @@ main_menu = types.ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-# Пример данных меню
+# Категории и товары
 menu_items = {
     "Кофе": ["Американо", "Капучино", "Латте"],
     "Напитки": ["Чай", "Морс"],
     "Десерты": ["Пончик", "Торт"]
 }
-
 cart = []
 
 # Обработчик /start и главное меню
 async def handle_start(message: types.Message):
     await message.answer("Добро пожаловать! Выберите опцию:", reply_markup=main_menu)
 
-# Обработка сообщений
+# Обработка всех сообщений
 async def handle_message(message: types.Message):
     text = message.text
-
     if text == "🍽 Меню":
         await message.answer("Выберите категорию:", reply_markup=category_keyboard())
     elif text == "🛒 Корзина":
         await show_cart(message)
     elif text == "⭐ Оставить отзыв":
         await message.answer("Напишите ваш отзыв или предложение:")
-        # Здесь можно реализовать состояние для отзывов
-        # Простая версия — сразу обработать
+        # Можно реализовать состояние для отзывов
         await handle_review(message)
     elif text == "📨 Связаться с администратором":
         await message.answer("Напишите ваше сообщение админу:")
-        # Здесь можно реализовать состояние
         await handle_admin_message(message)
     elif text == "📍 Где нас найти":
         await message.answer("Наш адрес: г. Москва, ул. Ленина, дом 1.\nНа карте:", reply_markup=location_keyboard())
     elif text == "🔙 Назад":
-        await message.answer("Главное меню:", reply_markup=main_menu)
+        await message.answer("Главное меню", reply_markup=main_menu)
     elif text in ["🧹 Очистить корзину", "✅ Оформить заказ", "🔙"]:
         await handle_cart_buttons(message)
     elif text == "Показать на карте":
@@ -65,10 +62,9 @@ async def handle_message(message: types.Message):
         cart.append(text)
         await message.answer(f"Добавлено в корзину: {text}")
     else:
-        # Неизвестное сообщение
         await message.answer("Я вас не понял. Используйте меню.")
 
-# Регистрация обработчика сообщений
+# Регистрация обработчиков
 dp.message.register(handle_start)
 dp.message.register(handle_message)
 
@@ -120,7 +116,7 @@ async def handle_cart_buttons(message: types.Message):
 
 async def handle_review(message: types.Message):
     review_text = message.text
-    # Здесь можно сохранять отзывы
+    # Можно сохранять отзывы
     await message.answer("Спасибо за отзыв!")
 
 def location_keyboard():
