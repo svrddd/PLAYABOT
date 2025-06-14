@@ -32,7 +32,7 @@ menu_items = {
 }
 cart = []
 
-# Обработчик /start и главное меню
+# Обработчик /start
 async def handle_start(message: types.Message):
     await message.answer("Добро пожаловать! Выберите опцию:", reply_markup=main_menu)
 
@@ -46,6 +46,7 @@ async def handle_message(message: types.Message):
     elif text == "⭐ Оставить отзыв":
         await message.answer("Напишите ваш отзыв или предложение:")
         # Можно реализовать состояние для отзывов
+        # Для простоты — сразу сохраняем
         await handle_review(message)
     elif text == "📨 Связаться с администратором":
         await message.answer("Напишите ваше сообщение админу:")
@@ -58,7 +59,7 @@ async def handle_message(message: types.Message):
         await handle_cart_buttons(message)
     elif text == "Показать на карте":
         await message.answer_location(latitude=55.7558, longitude=37.6173)
-    elif text in sum(menu_items.values(), []):  # если товар
+    elif text in sum(menu_items.values(), []):  # товар
         cart.append(text)
         await message.answer(f"Добавлено в корзину: {text}")
     else:
@@ -130,3 +131,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
