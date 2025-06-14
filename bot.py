@@ -350,10 +350,20 @@ def get_rating_keyboard():
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
 # --- Обработчики и функции дальше идут без изменений, они остаются как есть ---
+# Обработчик для всех сообщений
+@dp.message_handler()
+async def handle_any_message(message: types.Message):
+    await message.answer("Я вас не понял. Используйте меню или команды.")
+
+# Обработчик для всех callback-запросов
+@dp.callback_query_handler()
+async def handle_callback(callback: types.CallbackQuery):
+    await callback.answer()
+    print(f"Callback data: {callback.data}")
 
 # Запуск бота
 async def main():
-    await dp.start_polling(bot)
+    await dp.start_polling()
 
 if __name__ == "__main__":
     asyncio.run(main())
