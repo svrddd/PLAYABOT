@@ -7,7 +7,7 @@ WORKDIR /app/bot/
 
 COPY requirements.txt /app/bot/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r /app/bot/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /bot/requirements.txt
 
 COPY . /app
 
