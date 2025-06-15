@@ -1,20 +1,20 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command
 
 # Введите сюда ваш токен
 TOKEN = "7621100705:AAHJ7R4N4ihthLUjV7cvcP95WrAo4GQOvl8"
 # Введите сюда ваш Telegram ID (числом)
 ADMIN_ID = 2105766790
 
-# Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
 # Создаем экземпляр бота
 bot = Bot(token=TOKEN)
 
 # Создаем диспетчер с привязкой к боту
-dp = Dispatcher(bot)
+dp = Dispatcher()
 
 # Главное меню
 main_menu = types.ReplyKeyboardMarkup(
@@ -37,7 +37,7 @@ menu_items = {
 cart = []
 
 # Обработчик /start
-@dp.message(commands=["start"])
+@dp.message(Command("start"))
 async def handle_start(message: types.Message):
     await message.answer("Добро пожаловать! Выберите опцию:", reply_markup=main_menu)
 
@@ -52,16 +52,14 @@ async def handle_message(message: types.Message):
         await show_cart(message)
     elif text == "⭐ Оставить отзыв":
         await message.answer("Напишите ваш отзыв или предложение:")
-        # Для расширенной логики можно реализовать состояние
     elif text == "📨 Связаться с администратором":
         await message.answer("Напишите ваше сообщение админу:")
-        # Передача сообщения админу
         await bot.send_message(ADMIN_ID, f"Сообщение от пользователя {message.from_user.id}:\n{message.text}")
     elif text == "📍 Где нас найти":
         await message.answer("Наш адрес: г. Москва, ул. Ленина, дом 1.\nНа карте:", reply_markup=location_keyboard())
-    elif text == "🔙 Назад":
+    elif text == "🔙 Назад" or text == "🔙":
         await message.answer("Главное меню", reply_markup=main_menu)
-    elif text in ["🧹 Очистить корзину", "✅ Оформить заказ", "🔙"]:
+    elif text in ["🧹 Очистить корзину", "✅ Оформить заказ"]:
         await handle_cart_buttons(message)
     elif text == "Показать на карте":
         await message.answer_location(latitude=55.7558, longitude=37.6173)
@@ -73,7 +71,7 @@ async def handle_message(message: types.Message):
 
 def category_keyboard():
     return types.ReplyKeyboardMarkup(
-        keyboard=[[types.KeyboardButton(text=cat)] for cat in menu_items.keys()] + [[types.KeyboardButton(text="🔙")]],
+        keyboard=[[types.KeyboardButton(text=cat)] for cat in menu_items.keys()] + [[types.KeyboardButton(text="🔙 Назад")]],
         resize_keyboard=True
     )
 
@@ -88,7 +86,7 @@ def cart_keyboard():
     return types.ReplyKeyboardMarkup(
         keyboard=[
             [types.KeyboardButton(text="🧹 Очистить корзину"), types.KeyboardButton(text="✅ Оформить заказ")],
-            [types.KeyboardButton(text="🔙")]
+            [types.KeyboardButton(text="🔙 Назад")]
         ],
         resize_keyboard=True
     )
@@ -106,17 +104,18 @@ async def handle_cart_buttons(message: types.Message):
         await bot.send_message(ADMIN_ID, order_text)
         await message.answer("Ваш заказ отправлен админу. Спасибо!")
         cart.clear()
-    elif txt == "🔙":
-        await message.answer("Главное меню:", reply_markup=main_menu)
 
 def location_keyboard():
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add(types.KeyboardButton(text="Показать на карте", request_location=True))
-    return kb
+    return types.ReplyKeyboardMarkup(
+        keyboard=[[types.KeyboardButton(text="Показать на карте", request_location=True)]],
+        resize_keyboard=True
+    )
 
-# Асинхронная функция запуска бота
+# Запуск бота
 async def main():
-    await dp.start_polling()
+    # Запускаем бота и диспетчер
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
     asyncio.run(main())
+
