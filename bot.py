@@ -10,7 +10,8 @@ ADMIN_ID = 2105766790
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=TOKEN)
-dp = Dispatcher()
+# Передача bot при создании dispatcher
+dp = Dispatcher(bot)
 
 # Главное меню
 main_menu = types.ReplyKeyboardMarkup(
