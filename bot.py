@@ -33,24 +33,27 @@ menu_items = {
 cart = []
 
 # Обработчик /start
+@dp.message(commands=["start"])
 async def handle_start(message: types.Message):
     await message.answer("Добро пожаловать! Выберите опцию:", reply_markup=main_menu)
 
 # Обработка всех сообщений
+@dp.message()
 async def handle_message(message: types.Message):
     text = message.text
+
     if text == "🍽 Меню":
         await message.answer("Выберите категорию:", reply_markup=category_keyboard())
     elif text == "🛒 Корзина":
         await show_cart(message)
     elif text == "⭐ Оставить отзыв":
         await message.answer("Напишите ваш отзыв или предложение:")
-        # Можно реализовать состояние для отзывов
-        # Для простоты — сразу сохраняем
-        await handle_review(message)
+        # Для более сложной логики можно реализовать состояние
+        # Для простоты — сразу сохраняем отзыв
     elif text == "📨 Связаться с администратором":
         await message.answer("Напишите ваше сообщение админу:")
-        await handle_admin_message(message)
+        # Можно реализовать передачу сообщения админу
+        await bot.send_message(ADMIN_ID, f"Сообщение от пользователя {message.from_user.id}:\n{message.text}")
     elif text == "📍 Где нас найти":
         await message.answer("Наш адрес: г. Москва, ул. Ленина, дом 1.\nНа карте:", reply_markup=location_keyboard())
     elif text == "🔙 Назад":
@@ -65,21 +68,9 @@ async def handle_message(message: types.Message):
     else:
         await message.answer("Я вас не понял. Используйте меню.")
 
-# Регистрация обработчиков
-dp.message.register(handle_start)
-dp.message.register(handle_message)
-
-# Обработчик callback-запросов (если есть кнопки)
-async def handle_callback(callback: types.CallbackQuery):
-    await callback.answer()
-    print(f"Callback data: {callback.data}")
-
-dp.callback_query.register(handle_callback)
-
-# Вспомогательные функции
 def category_keyboard():
     return types.ReplyKeyboardMarkup(
-        keyboard=[[types.KeyboardButton(text=cat)] for cat in menu_items.keys()] + [[types.KeyboardButton(text="🔙 Назад")]],
+        keyboard=[[types.KeyboardButton(text=cat)] for cat in menu_items.keys()] + [[types.KeyboardButton(text="🔙")]],
         resize_keyboard=True
     )
 
@@ -114,11 +105,6 @@ async def handle_cart_buttons(message: types.Message):
         cart.clear()
     elif txt == "🔙":
         await message.answer("Главное меню:", reply_markup=main_menu)
-
-async def handle_review(message: types.Message):
-    review_text = message.text
-    # Можно сохранять отзывы
-    await message.answer("Спасибо за отзыв!")
 
 def location_keyboard():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
