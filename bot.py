@@ -13,8 +13,8 @@ logging.basicConfig(level=logging.INFO)
 # Создаем экземпляр бота
 bot = Bot(token=TOKEN)
 
-# Создаем диспетчер с привязкой к боту
-dp = Dispatcher()
+# Создаем диспетчер БЕЗ передачи бота
+dp = Dispatcher()  # Правильно: без аргументов
 
 # Главное меню
 main_menu = types.ReplyKeyboardMarkup(
@@ -114,8 +114,7 @@ def location_keyboard():
 # Запуск бота
 async def main():
     # Запускаем бота и диспетчер
-    await dp.start_polling(bot)
+    await dp.start_polling(bot)  # Передаем бота в start_polling
 
 if __name__ == "__main__":
     asyncio.run(main())
-
